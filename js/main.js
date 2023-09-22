@@ -47,32 +47,30 @@ function showResult() {
     document.getElementById("puntaje-container").style.display = "block";
 }
 
-// Cargar el puntaje desde el archivo JSON local
+// Cargar el puntaje desde storage
+
 async function loadScore() {
     try {
-        const response = await fetch("./JSON/data.json");
-        const data = await response.json();
-        score = data.score;
+        const storedScore = localStorage.getItem('score');
+        if (storedScore !== null) {
+            // Si hay un puntaje almacenado, lo cargamos
+            score = parseInt(storedScore, 10);
+        } else {
+            // Si no hay puntaje almacenado, lo cargamos desde el archivo JSON
+            const response = await fetch("./JSON/data.json");
+            const data = await response.json();
+            score = data.score;
+        }
         updateScore();
     } catch (error) {
         console.error("Error al cargar el puntaje:", error);
     }
 }
 
+
 // Guardar el puntaje en el archivo JSON local
-async function saveScore() {
-    const data = { score };
-    try {
-        await fetch("./JSON/data.json", {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        });
-    } catch (error) {
-        console.error("Error al guardar el puntaje:", error);
-    }
+function saveScore() {
+    localStorage.setItem('score', score.toString());
 }
 
 window.onload = function () {
